@@ -1,0 +1,2 @@
+--WSl como instalar (Entrar no CMD)
+wsl --install
