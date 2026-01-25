@@ -1,2 +1,14 @@
 --WSl como instalar (Entrar no CMD)
 wsl --install
+
+
+--Github
+--Manual
+https://cli.github.com/manual/
+
+--como instalar
+https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+
+gh auth login
+> Github
+> SSh
