@@ -16,3 +16,12 @@ https://github.com/cli/cli/blob/trunk/docs/install_linux.md
 gh auth login
 > Github
 > SSh
+
+
+
+--AWS CLI
+--verificar minha identidade 
+aws sts get-caller-identity
+
+--configurar key e secret access key
+aws configure
