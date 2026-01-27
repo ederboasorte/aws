@@ -1,3 +1,6 @@
+--Github
+https://github.com/faermanj/daws
+
 --WSl como instalar (Entrar no CMD)
 wsl --install
 
@@ -25,3 +28,34 @@ aws sts get-caller-identity
 
 --configurar key e secret access key
 aws configure
+
+
+
+
+
+
+
+
+
+
+--cloudFormation
+vi template.cfn.yaml
+Resources:
+  InfraBackendBucket:
+    Type: AWS::S3::Bucket
+
+--criar stack
+aws cloudformation create-stack --stack-name infra-backend --template-body file://template.cfn.yaml
+
+--Descrição
+aws cloudformation describe-stacks --stack-name infra-backend
+
+--apagar conteudo do S3
+aws s3 rm s3://infra-backend-infrabackendbucket-qyqzefhrbayk --recursive
+
+--apagar stack do cloudFormation
+aws cloudformation delete-stack --stack-name infra-backend
+
+
+
+
