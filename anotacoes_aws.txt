@@ -45,7 +45,7 @@ Resources:
     Type: AWS::S3::Bucket
 
 --criar stack
-aws cloudformation create-stack --stack-name infra-backend --template-body file://template.cfn.yaml
+aws cloudformation deploy --stack-name infra-backend --template-body file://template.cfn.yaml
 
 --Descrição
 aws cloudformation describe-stacks --stack-name infra-backend
@@ -55,6 +55,17 @@ aws s3 rm s3://infra-backend-infrabackendbucket-qyqzefhrbayk --recursive
 
 --apagar stack do cloudFormation
 aws cloudformation delete-stack --stack-name infra-backend
+
+
+
+
+
+
+
+
+--Servidor http em python
+sudo python3 -m http.server 80
+
 
 
 

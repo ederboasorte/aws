@@ -1,0 +1,104 @@
+ #criar stack no cloudFormation
+ #aws cloudformation deploy --stack-name simple-ec2-webserver --template-file template.ec2.cfn.yaml 
+ 
+ #Destruir stack no cloudFormation
+ #aws cloudformation delete-stack --stack-name simple-ec2-webserver
+
+Description: EC2 instance running a Python HTTP server
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: "t2.micro"
+
+#  AmiSsmParameter:
+#    Type: String
+#    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-arm64-gp2
+#    Description: SSM parameter name resolving to the desired AMI ID
+
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: "comunidadedevops-keypair"
+  
+  ImageId:
+    Description: Name of an existing AMI
+    Type: String
+    Default: "ami-0c1fe732b5494dc14"
+  
+
+  GitHubUser:
+    Description: GitHub username owning the repo
+    Type: String
+    Default: "faermanj"
+
+  GitHubRepo:
+    Description: GitHub repository name
+    Type: String
+    Default: "daws"
+
+  DetailedMonitoring:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true","false"]
+    Description: Enable CloudWatch detailed monitoring for the instance
+
+  VolumeSize:
+    Type: Number
+    Default: 8
+  
+  VolumeType:
+    Type: String
+    Default: gp3
+
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP and SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: !Ref ImageId
+      SecurityGroupIds:
+        - !Ref InstanceSecurityGroup
+      Monitoring: !Ref DetailedMonitoring
+      Tags:
+        - Key: Name
+          Value: WebServer
+      BlockDeviceMappings:
+      - DeviceName: /dev/xvda
+        Ebs:
+          VolumeSize: !Ref VolumeSize
+          VolumeType: !Ref VolumeType
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          yum install -y unzip python3 wget
+          cd /home/ec2-user
+          wget https://github.com/${GitHubUser}/${GitHubRepo}/archive/refs/heads/main.zip -O repo.zip
+          unzip repo.zip
+          cd ${GitHubRepo}-main/html/simple-html/
+          chown -R ec2-user:ec2-user /home/ec2-user/
+          nohup python3 -m http.server 80 --bind 0.0.0.0 &
+
+Outputs:
+  InstancePublicIP:
+    Description: Public IP of the EC2 instance
+    Value: !GetAtt WebServerInstance.PublicIp
+  WebURL:
+    Description: URL to access the web server
+    Value: !Sub "http://${WebServerInstance.PublicDnsName}/"
