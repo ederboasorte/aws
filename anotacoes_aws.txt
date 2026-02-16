@@ -65,6 +65,8 @@ aws cloudformation delete-stack --stack-name infra-backend
 
 --Servidor http em python
 sudo python3 -m http.server 80
+ou
+sudo python3 -m http.server 80 --directory /caminho/do/diretorio
 
 
 
