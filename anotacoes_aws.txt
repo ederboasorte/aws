@@ -56,6 +56,8 @@ aws s3 rm s3://infra-backend-infrabackendbucket-qyqzefhrbayk --recursive
 --apagar stack do cloudFormation
 aws cloudformation delete-stack --stack-name infra-backend
 
+--Listar os exports
+aws cloudformation list-exports --query "Exports[].Name" --output table
 
 
 
